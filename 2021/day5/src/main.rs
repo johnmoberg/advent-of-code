@@ -1,7 +1,6 @@
 use std::collections::HashMap;
 use std::fs;
 use std::cmp;
-use num::signum;
 
 #[derive(Debug)]
 struct Line {
@@ -59,7 +58,7 @@ fn main() {
         
         lines.push(Line {
             start: (x1, y1),
-            direction: (signum(x2 - x1), signum(y2 - y1)),
+            direction: ((x2 - x1).signum(), (y2 - y1).signum()),
             length: cmp::max((x2 - x1).abs(), (y2 - y1).abs()),
         });
     };
