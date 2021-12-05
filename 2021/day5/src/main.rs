@@ -11,19 +11,20 @@ struct Line {
 
 fn count_intersections(lines: &Vec<Line>, count_diagonal: bool) -> i32 {
     let mut map: HashMap<(i32, i32), i32> = HashMap::new();
-    for line in lines.iter() {
-        if !count_diagonal && line.direction.0.abs() + line.direction.1.abs() > 1 {
-            continue;
-        }
 
-        let mut x = line.start.0;
-        let mut y = line.start.1;
+    for line in lines.iter() {
+        let (mut x, mut y) = (line.start.0, line.start.1);
+        let (dx, dy) = (line.direction.0, line.direction.1);
+
+        if !count_diagonal && dx.abs() + dy.abs() > 1 {
+            continue;
+        };
 
         for _ in 0..=line.length {
             *map.entry((x, y)).or_insert(0) += 1;
 
-            x += line.direction.0;
-            y += line.direction.1;
+            x += dx;
+            y += dy;
         };
     };
 
