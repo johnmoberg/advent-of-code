@@ -20,22 +20,15 @@ fn count_intersections(lines: &Vec<Line>, count_diagonal: bool) -> i32 {
         let mut y = line.start.1;
 
         for _ in 0..=line.length {
-            let value = map.entry((x, y)).or_insert(0);
-            *value += 1;
+            *map.entry((x, y)).or_insert(0) += 1;
 
             x += line.direction.0;
             y += line.direction.1;
         };
     };
 
-    let mut count = 0;
-    for (_, value) in map.iter() {
-        if *value > 1 {
-            count += 1;
-        };
-    };
-
-    return count;
+    map.retain(|_, v| *v > 1);
+    map.len() as i32
 }
 
 fn main() {
