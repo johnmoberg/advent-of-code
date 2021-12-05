@@ -1,6 +1,7 @@
 use std::collections::HashMap;
 use std::fs;
 use std::cmp;
+use regex::Regex;
 
 #[derive(Debug)]
 struct Line {
@@ -34,22 +35,13 @@ fn count_intersections(lines: &Vec<Line>, count_diagonal: bool) -> i32 {
 
 fn main() {
     let contents = fs::read_to_string("../input/day5.txt").expect("Unable to read file");
+    let re = Regex::new(r"\d+").unwrap();
 
     let mut lines: Vec<Line> = Vec::new();
     for line in contents.lines() {
-        let mut parts = line.split(" -> ");
-        let start = parts.next().unwrap();
-        let end = parts.next().unwrap();
-        
-        let start_parts: Vec<&str> = start.split(",").collect();
-        let end_parts: Vec<&str> = end.split(",").collect();
-        
-        let x1 = start_parts[0].parse::<i32>().unwrap();
-        let y1 = start_parts[1].parse::<i32>().unwrap();
-        
-        let x2 = end_parts[0].parse::<i32>().unwrap();
-        let y2 = end_parts[1].parse::<i32>().unwrap();
-        
+        let coords: Vec<i32> = re.find_iter(line).filter_map(|d| d.as_str().parse().ok()).collect();
+        let (x1, y1, x2, y2) = (coords[0], coords[1], coords[2], coords[3]);
+
         lines.push(Line {
             start: (x1, y1),
             direction: ((x2 - x1).signum(), (y2 - y1).signum()),
