@@ -1,8 +1,14 @@
 use regex::Regex;
+use std::cmp;
 use std::fs::File;
 use std::io::{BufRead, BufReader};
 
 fn main() {
+    part1();
+    part2();
+}
+
+fn part1() {
     let file = File::open("input.txt").unwrap();
     let reader = BufReader::new(file);
 
@@ -15,18 +21,18 @@ fn main() {
         let p4: usize;
 
         let f = match instruction {
-            Instruction::TurnOn{x1, x2, x3, x4} => {
+            Instruction::TurnOn { x1, x2, x3, x4 } => {
                 (p1, p2, p3, p4) = (x1, x2, x3, x4);
                 |_: bool| true
-            },
-            Instruction::TurnOff{x1, x2, x3, x4} => {
+            }
+            Instruction::TurnOff { x1, x2, x3, x4 } => {
                 (p1, p2, p3, p4) = (x1, x2, x3, x4);
                 |_: bool| false
-            },
-            Instruction::Toggle{x1, x2, x3, x4} => {
+            }
+            Instruction::Toggle { x1, x2, x3, x4 } => {
                 (p1, p2, p3, p4) = (x1, x2, x3, x4);
                 |v: bool| !v
-            },
+            }
         };
 
         for i in p1..=p3 {
@@ -40,11 +46,64 @@ fn main() {
     println!("Got {} turned on lights", turned_on);
 }
 
+fn part2() {
+    let file = File::open("input.txt").unwrap();
+    let reader = BufReader::new(file);
+
+    let mut state = vec![vec![0; 1000]; 1000];
+    for line in reader.lines() {
+        let instruction = parse_instruction(line.unwrap());
+        let p1: usize;
+        let p2: usize;
+        let p3: usize;
+        let p4: usize;
+
+        let v: i8 = match instruction {
+            Instruction::TurnOn { x1, x2, x3, x4 } => {
+                (p1, p2, p3, p4) = (x1, x2, x3, x4);
+                1
+            }
+            Instruction::TurnOff { x1, x2, x3, x4 } => {
+                (p1, p2, p3, p4) = (x1, x2, x3, x4);
+                -1
+            }
+            Instruction::Toggle { x1, x2, x3, x4 } => {
+                (p1, p2, p3, p4) = (x1, x2, x3, x4);
+                2
+            }
+        };
+
+        for i in p1..=p3 {
+            for j in p2..=p4 {
+                state[i][j] = cmp::max(0, state[i][j] + v as i64);
+            }
+        }
+    }
+
+    let turned_on: i64 = state.into_iter().flatten().sum();
+    println!("Got {} total brightness", turned_on);
+}
+
 #[derive(PartialEq, Debug)]
 enum Instruction {
-    TurnOn { x1: usize, x2: usize, x3: usize, x4: usize },
-    TurnOff { x1: usize, x2: usize, x3: usize, x4: usize },
-    Toggle { x1: usize, x2: usize, x3: usize, x4: usize },
+    TurnOn {
+        x1: usize,
+        x2: usize,
+        x3: usize,
+        x4: usize,
+    },
+    TurnOff {
+        x1: usize,
+        x2: usize,
+        x3: usize,
+        x4: usize,
+    },
+    Toggle {
+        x1: usize,
+        x2: usize,
+        x3: usize,
+        x4: usize,
+    },
 }
 
 fn parse_instruction(s: String) -> Instruction {
