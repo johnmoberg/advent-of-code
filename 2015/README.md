@@ -1,0 +1,2 @@
+# Advent of Code 2015
+See [Advent of Code 2015](https://adventofcode.com/2015) for information about the problems. I'm solving these problems as a way to learn Rust, so don't expect great code and do expect hacky solutions :-)
