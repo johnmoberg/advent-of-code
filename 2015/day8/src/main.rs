@@ -7,6 +7,7 @@ fn main() {
     let input = fs::read_to_string("input.txt").unwrap();
     let lines = input.split("\n").collect::<Vec<&str>>();
     println!("Part 1: {}", part1(&lines));
+    println!("Part 2: {}", part2(&lines));
 }
 
 fn part1(strings: &Vec<&str>) -> usize {
@@ -16,9 +17,14 @@ fn part1(strings: &Vec<&str>) -> usize {
     })
 }
 
-fn char_count(s: &str) -> (usize, usize) {
-    let code_len = s.len();
+fn part2(strings: &Vec<&str>) -> usize {
+    strings.iter().fold(0, |sum, line| {
+        let (code_len, escaped_len) = char_count_2(line);
+        sum + (escaped_len - code_len)
+    })
+}
 
+fn char_count(s: &str) -> (usize, usize) {
     lazy_static! {
         static ref RE: Regex = Regex::new(r"\\x([0-9a-f]){2}").unwrap();
     }
@@ -27,7 +33,20 @@ fn char_count(s: &str) -> (usize, usize) {
     let deescaped = deescaped.replace("\\\"", "b");
     let deescaped = deescaped.replace("\\\\", "c");
 
-    (code_len, deescaped.len() - 2)
+    (s.len(), deescaped.len() - 2)
+}
+
+fn char_count_2(s: &str) -> (usize, usize) {
+    lazy_static! {
+        static ref RE: Regex = Regex::new(r"\\x([0-9a-f]){2}").unwrap();
+    }
+
+    let escaped = RE.replace_all(&s, "aaaaa");
+    let escaped = escaped.replace("\"", "aaa");
+    let escaped = escaped.replace("\\\"", "aaaa");
+    let escaped = escaped.replace("\\\\", "aaaa");
+
+    (s.len(), escaped.len())
 }
 
 #[test]
@@ -39,7 +58,21 @@ fn test_char_count() {
 }
 
 #[test]
+fn test_char_count_2() {
+    assert_eq!(char_count_2("\"\""), (2, 6));
+    assert_eq!(char_count_2("\"abc\""), (5, 9));
+    assert_eq!(char_count_2("\"aaa\\\"aaa\""), (10, 16));
+    assert_eq!(char_count_2("\"\\x27\""), (6, 11));
+}
+
+#[test]
 fn test_part1() {
     let v = vec!["\"\"", "\"abc\"", "\"aaa\\\"aaa\"", "\"\\x27\""];
     assert_eq!(part1(&v), 12);
+}
+
+#[test]
+fn test_part2() {
+    let v = vec!["\"\"", "\"abc\"", "\"aaa\\\"aaa\"", "\"\\x27\""];
+    assert_eq!(part2(&v), 19);
 }
