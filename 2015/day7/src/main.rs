@@ -98,6 +98,11 @@ fn get_value(s: &String, map: &HashMap<String, i64>) -> Option<i64> {
         return Some(maybe_int.unwrap());
     }
 
+    // Part 2 stuff 🤷‍♂️
+    if s == "b" {
+        return Some(956);
+    }
+
     match map.get(s) {
         Some(i) => Some(*i),
         None => None,
