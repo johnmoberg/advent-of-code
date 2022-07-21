@@ -2,6 +2,10 @@ fn main() {
     let input = String::from("1113222113");
     let output = (0..40).fold(input, |x, _| look_and_say(&x));
     println!("Part 1: {}", output.len());
+    
+    let input = String::from("1113222113");
+    let output = (0..50).fold(input, |x, _| look_and_say(&x));
+    println!("Part 2: {}", output.len());
 }
 
 fn look_and_say(s: &String) -> String {
