@@ -1,11 +1,10 @@
-use std::fs;
 use std::cmp;
 use std::collections::HashMap;
+use std::fs;
 
+use itertools::Itertools;
 use lazy_static::lazy_static;
 use regex::Regex;
-use itertools::Itertools;
-
 
 fn main() {
     let input = fs::read_to_string("input.txt").unwrap();
@@ -24,20 +23,40 @@ fn main() {
         let city_b = caps[2].parse::<String>().unwrap();
         let distance = caps[3].parse::<usize>().unwrap();
 
-        map.entry(city_a).or_insert(HashMap::new()).insert(city_b, distance);
+        map.entry(city_a.clone())
+            .or_insert(HashMap::new())
+            .insert(city_b.clone(), distance);
+        map.entry(city_b.clone())
+            .or_insert(HashMap::new())
+            .insert(city_a.clone(), distance);
     }
 
     let mut shortest_route = usize::MAX;
 
-    for p in map.keys().permutations(map.len()) {
+    'outer: for p in map.keys().permutations(map.len()) {
         let mut distance = 0;
-        for slice in p.windows(2) {
-            println!("{} {}", slice[0], slice[1]);
-            distance += map.get(slice[0]).unwrap().get(slice[1]).unwrap();
-        }
 
+        for slice in p.windows(2) {
+            if let Some(d) = get_distance(&map, &slice[0], &slice[1]) {
+                distance += d;
+            } else {
+                continue 'outer;
+            }
+        }
         shortest_route = cmp::min(shortest_route, distance);
     }
 
     println!("Found shortest route {}", shortest_route);
+}
+
+fn get_distance<'a>(
+    map: &'a HashMap<String, HashMap<String, usize>>,
+    a: &'a String,
+    b: &'a String,
+) -> Option<&'a usize> {
+    if let Some(h) = map.get(a) {
+        h.get(b)
+    } else {
+        None
+    }
 }
