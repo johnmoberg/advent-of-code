@@ -32,6 +32,7 @@ fn main() {
     }
 
     let mut shortest_route = usize::MAX;
+    let mut longest_route = usize::MIN;
 
     'outer: for p in map.keys().permutations(map.len()) {
         let mut distance = 0;
@@ -44,9 +45,11 @@ fn main() {
             }
         }
         shortest_route = cmp::min(shortest_route, distance);
+        longest_route = cmp::max(longest_route, distance);
     }
 
-    println!("Found shortest route {}", shortest_route);
+    println!("Found shortest route with distance {}", shortest_route);
+    println!("Found longest route with distance {}", longest_route);
 }
 
 fn get_distance<'a>(
