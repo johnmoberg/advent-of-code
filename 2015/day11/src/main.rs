@@ -4,6 +4,10 @@ fn main() {
     let input = String::from("hepxcrrq");
     let output = next_password(&input);
     println!("Part 1: {}", output);
+
+    let input = String::from("hepxxzaa");
+    let output = next_password(&input);
+    println!("Part 2: {}", output);
 }
 
 fn next_password(password: &String) -> String {
