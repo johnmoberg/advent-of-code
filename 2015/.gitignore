@@ -4,3 +4,4 @@
 **/*.rs.bk
 *.pdb
 **/*.txt
+**/*.json
