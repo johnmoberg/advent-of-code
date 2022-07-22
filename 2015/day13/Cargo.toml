@@ -9,3 +9,10 @@ edition = "2021"
 regex = "1.6.0"
 lazy_static = "1.4.0"
 itertools = "0.10.3"
+
+[dev-dependencies]
+criterion = "0.3"
+
+[[bench]]
+name = "my_benchmark"
+harness = false
