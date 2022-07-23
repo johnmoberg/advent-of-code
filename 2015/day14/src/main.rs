@@ -22,17 +22,18 @@ struct MovingReindeer<'a> {
     state: ReindeerState,
     time_left_in_state: u64,
     current_position: u64,
+    points: u64,
 }
 
 fn main() {
     let input = fs::read_to_string("input.txt").unwrap();
     let lines = input.split("\n").map(String::from).collect::<Vec<String>>();
     let reindeers = parse_input(&lines);
-    let answer = distance_after_seconds(&reindeers, 2503);
-    println!("Part 1: {}", answer);
+    let answer = max_points_after_seconds(&reindeers, 2503);
+    println!("Part 2: {}", answer);
 }
 
-fn distance_after_seconds(reindeers: &Vec<Reindeer>, time: u64) -> u64 {
+fn max_points_after_seconds(reindeers: &Vec<Reindeer>, time: u64) -> u64 {
     let mut v = Vec::new();
     for reindeer in reindeers {
         let r = MovingReindeer {
@@ -40,11 +41,14 @@ fn distance_after_seconds(reindeers: &Vec<Reindeer>, time: u64) -> u64 {
             state: ReindeerState::Moving,
             time_left_in_state: reindeer.run_time,
             current_position: 0,
+            points: 0,
         };
         v.push(r);
     }
 
     for _ in 0..time {
+        let mut current_lead_distance = u64::MIN;
+
         for r in v.iter_mut() {
             r.current_position += match r.state {
                 ReindeerState::Moving => r.reindeer.velocity,
@@ -61,15 +65,21 @@ fn distance_after_seconds(reindeers: &Vec<Reindeer>, time: u64) -> u64 {
                     ReindeerState::Resting => r.reindeer.rest_time,
                 }
             }
+            current_lead_distance = cmp::max(current_lead_distance, r.current_position);
         }
+        
+        for r in v.iter_mut() {
+            if r.current_position >= current_lead_distance {
+                r.points += 1;
+            }
+        }    
     }
 
-    v.iter()
-        .fold(u64::MIN, |m, r| cmp::max(m, r.current_position))
+    v.iter().fold(u64::MIN, |m, r| cmp::max(m, r.points))
 }
 
 #[test]
-fn test_distance_after_seconds() {
+fn test_max_points_after_seconds() {
     let reindeers = vec![
         Reindeer {
             name: String::from("Comet"),
@@ -84,8 +94,8 @@ fn test_distance_after_seconds() {
             rest_time: 162,
         },
     ];
-    let d = distance_after_seconds(&reindeers, 1000);
-    assert_eq!(d, 1120);
+    let d = max_points_after_seconds(&reindeers, 1000);
+    assert_eq!(d, 689);
 }
 
 fn parse_input<'a>(lines: &'a Vec<String>) -> Vec<Reindeer> {
