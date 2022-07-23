@@ -21,13 +21,13 @@ fn main() {
 
             let could_be = match &t1[..] {
                 "children" => q1 == 3,
-                "cats" => q1 == 7,
+                "cats" => q1 > 7,
                 "samoyeds" => q1 == 2,
-                "pomeranians" => q1 == 3,
+                "pomeranians" => q1 < 3,
                 "akitas" => q1 == 0,
                 "vizslas" => q1 == 0,
-                "goldfish" => q1 == 5,
-                "trees" => q1 == 3,
+                "goldfish" => q1 < 5,
+                "trees" => q1 > 3,
                 "cars" => q1 == 2,
                 "perfumes" => q1 == 1,
                 _ => panic!(),
