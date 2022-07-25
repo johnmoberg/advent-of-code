@@ -16,11 +16,20 @@ fn main() {
         }
     }
 
+    const CORNERS: [(i64, i64); 4] = [(0, 0), (0, 99), (99, 0), (99, 99)];
+    for corner in CORNERS {
+        on.insert(corner);
+    }
+
     for _ in 0..100 {
         let tmp_on = on.clone();
 
         for i in 0..100 {
             for j in 0..100 {
+                if CORNERS.contains(&(i, j)) {
+                    continue;
+                }
+
                 let neighbours = [
                     (i - 1, j - 1),
                     (i, j - 1),
@@ -44,5 +53,5 @@ fn main() {
         }
     }
 
-    println!("Part 1: {}", on.len())
+    println!("Answer: {}", on.len())
 }
