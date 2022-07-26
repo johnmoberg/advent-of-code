@@ -59,4 +59,40 @@ fn main() {
     }
 
     println!("Part 1: {}", distinct.len());
+
+    let mut inverse: HashMap<&str, &str> = HashMap::new();
+    for (to, froms) in replacements {
+        for from in froms {
+            assert!(!inverse.contains_key(from));
+            inverse.insert(from, to);
+        }
+    }
+
+    // Embarrassingly hacky solution that somehow works but I'm getting tired of AoC :-D
+    let mut n_steps = 0;
+    let mut input = input.clone();
+
+    while input != String::from("e") {
+        for window_size in 1..=10 {
+            for slice in input
+                .chars()
+                .enumerate()
+                .collect::<Vec<(usize, char)>>()
+                .windows(window_size)
+            {
+                let prefix = &input[..slice.first().unwrap().0];
+                let suffix = &input[slice.last().unwrap().0 + 1..];
+
+                let substr = slice.iter().map(|(_, s)| s).collect::<String>();
+
+                if let Some(v) = inverse.get(&*substr) {
+                    input = format!("{}{}{}", prefix, v, suffix);
+                    n_steps += 1;
+                    break;
+                }
+            }
+        }
+    }
+
+    println!("Part 2: {}", n_steps);
 }
